@@ -11,9 +11,24 @@ Python 3
 minifier.py [options] file
 
 ### Options
-* -a, --all                 apply all transformations (default option if none specified)
-* -c, --remove-comments     remove comments
-* -i, --remove-indentation  remove leading whitespace
-* -s, --remove-spaces       remove spaces within instructions
-* -n, --remove-newlines     merge the script into a single line
-* -v, --replace-vars        replace variable names with shorter ones
+* `-a, --all`
+
+Apply all transformations (default option if none specified)
+* `-c, --remove-comments`
+
+Remove comments
+* `-i, --remove-indentation`
+
+Remove leading whitespace
+
+* `-s, --remove-spaces`
+
+Remove spaces within instructions
+
+* `-n, --remove-newlines`
+
+Merge the script into a single line
+
+* `-v, --replace-vars`
+
+Replace variable names with shorter ones
