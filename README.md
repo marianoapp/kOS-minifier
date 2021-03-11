@@ -32,3 +32,12 @@ Merge the script into a single line
 * `-v, --replace-vars`
 
 Replace variable names with shorter ones
+
+## Notes
+
+Adding a comment starting with `// #EXTERNAL_IDS ` allows to define a comma-separated list of variables that should not be renamed.
+Useful for global variables that are used or exported by the script.
+
+### Example
+
+`// #EXTERNAL_IDS myVar1, myVar2`
