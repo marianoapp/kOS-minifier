@@ -36,6 +36,9 @@ reserved_words = [
     "abort", "ag1", "ag2", "ag3", "ag4", "ag5", "ag6", "ag7", "ag8", "ag9", "ag10",
     "white", "black", "red", "green", "blue", "yellow", "magenta", "purple", "cyan", "grey", "gray",
     "encounter", "eta", "nextnode", "hasnode", "allnodes",
+    # listables
+    "bodies", "targets", "fonts", "processors", "resources", "parts", "engines", "elements", # "rcs", "sensors",
+    "dockingports", "files", "volumes",
     # built-in functions
     "addalarm", "listalarms", "deletealarm", "buildlist", "vcrs", "vectorcrossproduct", "vdot", "vectordotproduct",
     "vxcl", "vectorexclude", "vang", "vectorangle", "clearscreen", "hudtext", "stage", "add", "remove", "warpto",
