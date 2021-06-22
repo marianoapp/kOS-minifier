@@ -213,31 +213,43 @@ def print_help():
   -n, --remove-newlines     merge the script into a single line
   -v, --replace-vars        replace variable names with shorter ones
       --help                print this help and exit
+
+The uppercase version of the single letter flags have the opposite effect
+e.g. -aN applies all transformations except removing newlines
 """
     print(help_message)
 
 
 def parse_options(options):
-    short_opts = [x.replace("-", "") for x in options if re.match(r"^-[a-z]+", x)]
+    short_opts = [x.replace("-", "") for x in options if re.match(r"^-[a-zA-Z]+", x)]
     short_opts = [char for char in "".join(short_opts)]
     long_opts = [x.replace("--", "") for x in options if re.match(r"^--[a-z\-]+", x)]
     opts = short_opts + long_opts
     # available flags
-    all_flags = [[MinFlags.ALL, ["a", "all"]],
-                 [MinFlags.REMOVE_COMMENTS, ["c", "remove-comments"]],
-                 [MinFlags.REMOVE_INDENTATION, ["i", "remove-indentation"]],
-                 [MinFlags.REMOVE_SPACES, ["s", "remove-spaces"]],
-                 [MinFlags.REMOVE_NEWLINES, ["n", "remove-newlines"]],
-                 [MinFlags.REPLACE_VARS, ["v", "replace-vars"]],
-                 [MinFlags.HELP, ["help"]]]
+    all_flags = [[MinFlags.ALL, ["a", "all"], []],
+                 [MinFlags.REMOVE_COMMENTS, ["c", "remove-comments"], ["C"]],
+                 [MinFlags.REMOVE_INDENTATION, ["i", "remove-indentation"], ["I"]],
+                 [MinFlags.REMOVE_SPACES, ["s", "remove-spaces"], ["S"]],
+                 [MinFlags.REMOVE_NEWLINES, ["n", "remove-newlines"], ["N"]],
+                 [MinFlags.REPLACE_VARS, ["v", "replace-vars"], ["V"]],
+                 [MinFlags.HELP, ["help"], []]]
     flags_dict = {opt: flag[0] for flag in all_flags for opt in flag[1]}
-    # parse selected flags
+    neg_flags_dict = {opt: flag[0] for flag in all_flags for opt in flag[2]}
+    # parse positive flags
     flags = MinFlags.NONE
     for o in opts:
         if o in flags_dict:
             flags |= flags_dict[o]
-        else:
-            print("'%s' is not a valid option" % o)
+        elif o not in neg_flags_dict:
+            print("'{0}' is not a valid option".format(o))
+            return None
+    # if no flags were specified use the default value
+    if flags == MinFlags.NONE:
+        flags = MinFlags.ALL
+    # parse negative flags
+    for o in opts:
+        if o in neg_flags_dict:
+            flags ^= neg_flags_dict[o]
     return flags
 
 
@@ -248,17 +260,16 @@ def main():
     else:
         options = [opt for opt in sys.argv[1:] if opt.startswith("-")]
         flags = parse_options(options)
-        if MinFlags.HELP in flags:
-            print_help()
-            return
-        else:
-            if flags == MinFlags.NONE:
-                flags = MinFlags.ALL
-            # TODO: make more robust
-            # assume the file name is the last argument
-            file_name = sys.argv[-1]
-            result = minify(file_name, flags)
-            print(result)
+        if flags is not None:
+            if MinFlags.HELP in flags:
+                print_help()
+                return
+            else:
+                # TODO: make more robust
+                # assume the file name is the last argument
+                file_name = sys.argv[-1]
+                result = minify(file_name, flags)
+                print(result)
 
 
 if __name__ == "__main__":
