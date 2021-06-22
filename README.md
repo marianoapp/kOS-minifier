@@ -11,34 +11,34 @@ Python 3
 minifier.py [options] file
 
 ### Options
-* `-a, --all`
+* `-a, --all`\
 Apply all transformations (default option if none specified)
 
-* `-c, --remove-comments`
+* `-c, --remove-comments`\
 Remove comments
 
-* `-i, --remove-indentation`
+* `-i, --remove-indentation`\
 Remove leading whitespace
 
-* `-s, --remove-spaces`
+* `-s, --remove-spaces`\
 Remove spaces within instructions
 
-* `-n, --remove-newlines`
+* `-n, --remove-newlines`\
 Merge the script into a single line
 
-* `-v, --replace-vars`
+* `-v, --replace-vars`\
 Replace variable names with shorter ones
 
-* `-f, --alias-functions`
+* `-f, --alias-functions`\
 Create aliases for commonly used built-in functions
 
-* `-o, --alias-constants`
+* `-o, --alias-constants`\
 Create aliases for commonly used built-in constants
 
-* `-b, --bind-functions`
+* `-b, --bind-functions`\
 Create aliases binding functions with constant arguments
 
-* `-u, --use-shortcuts`
+* `-u, --use-shortcuts`\
 Replace game variables with their shorter form
 
 The uppercase version of the single letter flags have the opposite effect
