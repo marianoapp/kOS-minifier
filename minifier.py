@@ -116,34 +116,43 @@ def simplify(text):
     return text
 
 
+def find_count_identifiers(pattern, text, min_count=1):
+    identifiers = re.findall(pattern, text)
+    # unique identifiers with a count of how many times they appear in the text
+    identifiers = [[item, count] for item, count in collections.Counter(identifiers).items()
+                   if count >= min_count]
+    return identifiers
+
+
 def tokenize_variables(text, external_ids):
-    # the negative lookbehind skip suffixes and string tokens
-    regex = re.compile(r"(?<![:%])\b[a-z]\w*")
-    # find all identifiers
-    matches = regex.findall(text)
-    # get unique identifiers
-    # matches = list(set(matches))
-    matches = list(dict.fromkeys(matches))
+    identifiers = find_count_identifiers(r"(?<![:%])\b[a-z]\w*", text)
     # exclude all identifiers that are in the reserved_words list
-    ids_exclude = reserved_words + external_ids
-    matches = [x for x in matches if x not in ids_exclude]
+    ids_exclude = reserved_words.union(external_ids)
+    identifiers = [[item, count] for item, count in identifiers if item not in ids_exclude]
+    # sort identifiers so the most common ones get the shorter names
+    identifiers_tokenize = [item for item, _ in sorted(identifiers, key=itemgetter(1), reverse=True)]
     # replace identifiers with tokens
     tokens = []
     last_index = 1
     repl_pattern = r"(?<![:%])\b{VARNAME}\b"
-    for match in matches:
+    for token_text in identifiers_tokenize:
         token_id = "%v" + str(last_index)
-        token_text = match
         tokens.append([token_id, token_text])
         text = re.sub(repl_pattern.replace("{VARNAME}", token_text), token_id, text)
         last_index += 1
     # replace tokens with new var names
-    for tok in reversed(tokens):
+    token_dict = {}
+    skip = 0
+    for tok in tokens:
         index = int(tok[0][2:])
-        new_var_name = index_to_var_name(index)
-        # avoid variable names that are reserved words, like "v" and "r"
-        while new_var_name in ids_exclude:
-            new_var_name = "_" + new_var_name
+        while True:
+            new_var_name = index_to_var_name(index + skip)
+            if new_var_name not in ids_exclude:
+                break
+            skip += 1
+        token_dict[tok[0]] = new_var_name
+    for tok in reversed(tokens):
+        new_var_name = token_dict[tok[0]]
         text = text.replace(tok[0], new_var_name)
         tok[0] = new_var_name
     return text, tokens
