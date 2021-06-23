@@ -131,7 +131,7 @@ def parse_external_ids(text):
 
 
 def remove_comments(text):
-    return re.sub(r"\s*//.+", "", text)
+    return re.sub(r"\s*//.+", "", text).strip()
 
 
 def tokenize_string_literals(text):
@@ -177,7 +177,8 @@ def alias_builtin_functions(text):
     for alias in aliases:
         var_instruction = alias_template.format(*alias)
         alias_decl.append(var_instruction)
-    text = "\n".join(alias_decl) + "\n" + text
+    if len(alias_decl) > 0:
+        text = "\n".join(alias_decl) + "\n" + text
     return text
 
 
@@ -211,7 +212,8 @@ def alias_constants(text):
     for alias in aliases:
         var_instruction = alias_template.format(*alias)
         alias_decl.append(var_instruction)
-    text = "\n".join(alias_decl) + "\n" + text
+    if len(alias_decl) > 0:
+        text = "\n".join(alias_decl) + "\n" + text
     return text
 
 
@@ -235,7 +237,8 @@ def bind_functions(text):
     for alias in aliases:
         var_instruction = alias_template.format(*alias)
         alias_decl.append(var_instruction)
-    text = "\n".join(alias_decl) + "\n" + text
+    if len(alias_decl) > 0:
+        text = "\n".join(alias_decl) + "\n" + text
     return text
 
 
