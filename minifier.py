@@ -91,14 +91,7 @@ shortcuts = [
 # - replace suffixes with their short name (orbit -> obt) DANGEROUS: can override custom suffixes
 
 
-def minify(file_name, flags):
-    # open the file
-    if os.path.exists(file_name):
-        with open(file_name, "r") as f:
-            text = f.read()
-    else:
-        print("File not found!")
-        return ""
+def minify(text, flags):
     # process file
     external_ids = parse_external_ids(text)
     # strip comments
@@ -350,6 +343,17 @@ def restore_string_literals(text, string_tokens):
     return text
 
 
+def read_file(file_name):
+    # open the file
+    if os.path.exists(file_name):
+        with open(file_name, "r") as f:
+            text = f.read()
+    else:
+        print("File not found!")
+        return ""
+    return text
+
+
 def print_help():
     help_message = """Usage: minifier.py [options] file
 
@@ -414,22 +418,31 @@ def parse_options(options):
 
 
 def main():
-    if len(sys.argv) == 1:
+    text = ""
+    read_from_file = sys.stdin.isatty()
+    # check if the script is being called directly from a terminal
+    if read_from_file:
+        if len(sys.argv) == 1:
+            print_help()
+            return
+    else:
+        text = sys.stdin.read()
+    # parse options
+    options = [opt for opt in sys.argv[1:] if opt.startswith("-")]
+    flags = parse_options(options)
+    if flags is None:
+        return
+    if MinFlags.HELP in flags:
         print_help()
         return
-    else:
-        options = [opt for opt in sys.argv[1:] if opt.startswith("-")]
-        flags = parse_options(options)
-        if flags is not None:
-            if MinFlags.HELP in flags:
-                print_help()
-                return
-            else:
-                # TODO: make more robust
-                # assume the file name is the last argument
-                file_name = sys.argv[-1]
-                result = minify(file_name, flags)
-                print(result)
+    # minify the text
+    if read_from_file:
+        # assumes the file name is the last argument
+        text = read_file(sys.argv[-1])
+        if len(text) == 0:
+            return
+    result = minify(text, flags)
+    print(result)
 
 
 if __name__ == "__main__":
