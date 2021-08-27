@@ -81,9 +81,7 @@ shortcuts = [
     ["ship:verticalspeed", "verticalspeed"], ["ship:surfacespeed", "surfacespeed"], ["ship:groundspeed", "groundspeed"],
     ["ship:airspeed", "airspeed"], ["ship:shipname", "shipname"], ["ship:altitude", "altitude"],
     ["ship:apoapsis", "apoapsis"], ["ship:periapsis", "periapsis"], ["ship:sensor", "sensor"],
-    ["ship:srfprograde", "srfprograde"], ["ship:srfretrograde", "srfretrograde"],
-    # others
-    ["time:seconds", "time"]
+    ["ship:srfprograde", "srfprograde"], ["ship:srfretrograde", "srfretrograde"]
 ]
 
 # TODO:
@@ -164,7 +162,7 @@ def alias_builtin_functions(text):
     alias_template = "local {0} to {1}@."
     alias_template_len = get_alias_template_length(alias_template)
     functions_to_alias = [item for item, count in functions
-                          if alias_template_len + len(item) + count * 2 < len(item) * count]
+                          if alias_template_len + len(item) + count < len(item) * count]
     # create aliases and replace them in the text
     aliases = []
     repl_pattern = r"(?<![:%])\b{FUNCNAME}(?=[(@])"
@@ -320,7 +318,7 @@ def replace_with_shortcuts(text):
 
 def remove_whitespace(text, flags):
     # regex patterns
-    special_chars = r"+\-/*\^<>=\(\)\{\}\[\],:#"
+    special_chars = r"+\-/*\^<>=\(\)\{\}\[\],:#~%&\|"
     patterns = [
                 [r"[ \t]+$", r""],                          # remove trailing whitespace
                 [r"\n{2,}", r"\n"]                          # replace multiple newlines with a single one
